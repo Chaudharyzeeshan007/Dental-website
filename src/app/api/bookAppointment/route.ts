@@ -1,38 +1,27 @@
-import { google } from "googleapis";
-import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-const credentialsPath = path.join(process.cwd(), "credentials.json");
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method === 'POST') {
+        const { name, email, phone, date, time, service, message } = req.body;
 
-const auth = new google.auth.GoogleAuth({
-  credentials: JSON.parse(fs.readFileSync(credentialsPath, "utf-8")),
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-});
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyOSEoXp5CA_TOPaCoz3rfgJu-pizEr2GiznmgqtJWrhtsriPh7P_C58QbaJC-iZ_FN/exec'; // Replace with your Google Apps Script URL
 
-const sheets = google.sheets({ version: "v4", auth });
+        try {
+            const response = await fetch(scriptUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, date, time, service, message }),
+            });
 
-const SPREADSHEET_ID = "1H43O-gk_mLIMlxfaVyr9Wk6mKOoHt9JDVExsG7JS30g";
-const RANGE = "Sheet1!A:G";
-
-// ✅ Next.js App Router requires named functions (POST)
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const { name, email, phone, date, time, service, message } = body;
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: SPREADSHEET_ID,
-      range: RANGE,
-      valueInputOption: "RAW",
-      requestBody: {
-        values: [[name, email, phone, date, time, service, message]],
-      },
-    });
-
-    return NextResponse.json({ message: "Appointment booked successfully!" }, { status: 200 });
-  } catch (error) {
-    console.error("Error saving appointment:", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
-  }
+            if (response.ok) {
+                res.status(200).json({ result: 'success' });
+            } else {
+                res.status(500).json({ result: 'error', message: 'Failed to submit form' });
+            }
+        } catch (error) {
+            res.status(500).json({ result: 'error', message: (error as Error).message });
+        }
+    } else {
+        res.status(405).json({ result: 'error', message: 'Method not allowed' });
+    }
 }
