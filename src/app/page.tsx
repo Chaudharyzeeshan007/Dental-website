@@ -32,7 +32,7 @@ export default function Home() {
           <div className="text-center text-white">
             <h1 className="text-5xl font-serif mb-4">Welcome to LUMINO</h1>
             <h4 className="text-xl font-mono mb-4">Dental & Aesthetics Clinic</h4>
-            <p className="text-xl mb-8">Your smile is our priority</p>
+            <p className="text-xl mb-8">Yours smile is our priority</p>
             <Link href="/book-appointment">
               <Button className="bg-blue-600 hover:bg-blue-700">Book Your Appointment</Button>
             </Link>
