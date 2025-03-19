@@ -227,11 +227,13 @@ function Header() {
             </Link>
             <div className="flex flex-col items-center py-3 space-y-3">
               <div className="flex items-center gap-2 text-gray-700">
-                <Phone size={20} className="text-teal-500" />
+               <a href="https://wa.me/923345218215"> <Phone size={20} className="text-teal-500" />
                 <span>
                   03345218215 <br />
                   051-6166007
                 </span>
+               
+               </a>
               </div>
               <Link
                 href="/book-appointment"
